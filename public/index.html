@@ -1,0 +1,125 @@
+<!DOCTYPE html><<<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="black">
+
+    <!-- A-Frame Library -->
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+
+    <!-- MindAR Library for AR -->
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="estilo.css">
+
+    <style>
+        #play-button {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="example-container">
+        <div id="example-scanning-overlay">
+            <div class="inner">
+                <img src="./markers/899676183.png">
+                <div class="scanline"></div>
+            </div>
+        </div>
+
+        <!-- A-Frame Scene -->
+        <!-- <a-scene mindar-image="imageTargetSrc: https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/card-example/card.mind; showStats: false; uiScanning: #example-scanning-overlay;" embedded color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false"> -->
+        <a-scene mindar-image="imageTargetSrc: ./markers/899676183.mind; showStats: false; uiScanning: #example-scanning-overlay;" embedded color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+            <a-assets>
+                <!-- Ruta del video -->
+                <video id="gol-mp4" src="./markers/899676183.mp4" preload="auto" playsinline="true" webkit-playsinline="true"></video>
+                <!-- <img id="card" src="./markers/card-06cb9111a8e32627db6bfafc7aa22a4d.png"> -->
+            </a-assets>
+
+            <!-- Camera -->
+            <a-camera position="0 0 0" look-controls="enabled: false" cursor="fuse: false; rayOrigin: mouse;" raycaster="far: 10000; objects: .clickable"></a-camera>
+
+            <!-- Target Entity -->
+            <a-entity id="mytarget" mindar-image-target="targetIndex: 0">
+                <!-- Empty container for the video -->
+                <a-entity id="video-container" position="0 0 0"></a-entity>
+            </a-entity>
+        </a-scene>
+    </div>
+
+    <!-- Button to start video playback -->
+    <button id="play-button">Iniciar Video</button>
+
+    <!-- JavaScript to control video playback -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const videoEl = document.createElement('a-video');
+            videoEl.setAttribute('src', '#gol-mp4');
+            videoEl.setAttribute('position', '0 0 0');
+            videoEl.setAttribute('width', '1');
+            videoEl.setAttribute('height', '0.552');
+            videoEl.setAttribute('autoplay', 'false');
+            videoEl.setAttribute('loop', 'true');
+            videoEl.setAttribute('playsinline', 'true');
+            videoEl.setAttribute('webkit-playsinline', 'true');
+
+            const container = document.querySelector('#video-container');
+            container.appendChild(videoEl);
+
+            const showVideo = () => {
+                videoEl.setAttribute('autoplay', 'false');
+                document.querySelector("#gol-mp4").play();
+            }
+
+            const targetEntity = document.querySelector("#mytarget");
+            targetEntity.addEventListener('targetFound', () => {
+                showVideo();
+            });
+
+            targetEntity.addEventListener('targetLost', () => {
+                videoEl.setAttribute('autoplay', 'false');
+                document.querySelector("#gol-mp4").pause();
+            });
+
+            const goFullscreen = () => {
+                const elem = document.documentElement;
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.mozRequestFullScreen) { /* Firefox */
+                    elem.mozRequestFullScreen();
+                } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) { /* IE/Edge */
+                    elem.msRequestFullscreen();
+                }
+            };
+
+            document.querySelector('#play-button').addEventListener('click', () => {
+                const video = document.querySelector('#gol-mp4');
+                video.play(); // Intenta reproducir el video
+
+                // Forzar la actualización del objetivo
+                targetEntity.emit('targetFound');
+
+                // Ocultar el botón después de hacer clic
+                document.querySelector('#play-button').style.display = 'none';
+
+                // Activar pantalla completa
+                goFullscreen();
+            });
+        });
+    </script>
+</body>
