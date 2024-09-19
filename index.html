@@ -1,4 +1,5 @@
-<!DOCTYPE html><<<html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -41,12 +42,9 @@
         </div>
 
         <!-- A-Frame Scene -->
-        <!-- <a-scene mindar-image="imageTargetSrc: https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/card-example/card.mind; showStats: false; uiScanning: #example-scanning-overlay;" embedded color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false"> -->
         <a-scene mindar-image="imageTargetSrc: ./markers/899676183.mind; showStats: false; uiScanning: #example-scanning-overlay;" embedded color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
             <a-assets>
-                <!-- Ruta del video -->
                 <video id="gol-mp4" src="./markers/899676183.mp4" preload="auto" playsinline="true" webkit-playsinline="true"></video>
-                <!-- <img id="card" src="./markers/card-06cb9111a8e32627db6bfafc7aa22a4d.png"> -->
             </a-assets>
 
             <!-- Camera -->
@@ -54,16 +52,15 @@
 
             <!-- Target Entity -->
             <a-entity id="mytarget" mindar-image-target="targetIndex: 0">
-                <!-- Empty container for the video -->
                 <a-entity id="video-container" position="0 0 0"></a-entity>
             </a-entity>
         </a-scene>
     </div>
 
     <!-- Button to start video playback -->
-    <!-- <button id="play-button">Iniciar Video</button> -->
+    <button id="play-button">Iniciar Video</button>
 
-    <!-- JavaScript to control video playback -->
+    <!-- JavaScript to control video playback and device detection -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const videoEl = document.createElement('a-video');
@@ -107,19 +104,30 @@
                 }
             };
 
-            // document.querySelector('#play-button').addEventListener('click', () => {
-            //     const video = document.querySelector('#gol-mp4');
-            //     video.play(); // Intenta reproducir el video
+            document.querySelector('#play-button').addEventListener('click', () => {
+                const video = document.querySelector('#gol-mp4');
+                video.play(); // Intenta reproducir el video
 
-            //     // Forzar la actualización del objetivo
-            //     targetEntity.emit('targetFound');
+                // Forzar la actualización del objetivo
+                targetEntity.emit('targetFound');
 
-            //     // Ocultar el botón después de hacer clic
-            //     document.querySelector('#play-button').style.display = 'none';
+                // Ocultar el botón después de hacer clic
+                document.querySelector('#play-button').style.display = 'none';
 
-            //     // Activar pantalla completa
-            //     goFullscreen();
-            // });
+                // Activar pantalla completa
+                goFullscreen();
+            });
+
+            // Detectar el dispositivo
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+            // Mostrar el botón solo en iPhone
+            if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                document.querySelector('#play-button').style.display = 'block';
+            } else {
+                document.querySelector('#play-button').style.display = 'none';
+            }
         });
     </script>
 </body>
+</html>
