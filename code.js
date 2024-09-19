@@ -21,11 +21,11 @@ module.exports = function(numero) {
     }
 
     async function generarQRCode() {
-        const texto = numero.toString(); // Convertir el número a texto
+        const link = 'https://datalab-um.github.io/Chec-AR/'; // Enlace que quieres codificar
 
         try {
             // Ajusta el tamaño del QR con la opción width
-            await QRCode.toFile(filePath, texto, { width: 300 });
+            await QRCode.toFile(filePath, link, { width: 300 });
             console.log(`Código QR guardado como ${numero}.png en la carpeta markers`);
             
             // Llama a la función para convertir el archivo después de generarlo

@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 module.exports = async function(numero) {
-    const browser = await firefox.launch({ headless: false });
+    const browser = await firefox.launch({ headless: true });
     const page = await browser.newPage();
     await page.setViewportSize({ width: 1280, height: 800 }); // Establecer el tamaño de la ventana
 
